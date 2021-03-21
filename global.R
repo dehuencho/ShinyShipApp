@@ -6,6 +6,7 @@ library(tidyverse)
 library(leaflet)
 library(lubridate)
 library(shinyjs)
+library(sf)
 
 source("R/dropdown_mod.R")
 source("R/plotHist_mod.R")
