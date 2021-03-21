@@ -5,9 +5,11 @@ library(data.table)
 library(tidyverse)
 library(leaflet)
 library(lubridate)
+library(shinyjs)
 
 source("R/dropdown_mod.R")
 source("R/plotHist_mod.R")
+source("R/utils.R")
 
 myGridTemplate <- grid_template(
     default = list(
@@ -17,7 +19,7 @@ myGridTemplate <- grid_template(
             c("user", "map")
         ),
         cols_width = c("400px", "1fr"),
-        rows_height = c("50px", "auto", "200px")
+        rows_height = c("50px", "auto", "150px")
     ),
     mobile = list(
         areas = rbind(

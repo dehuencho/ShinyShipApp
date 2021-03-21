@@ -1,13 +1,17 @@
 ui <- semanticPage(
+    useShinyjs(),
     tags$head(
         tags$link(rel = "stylesheet", type = "text/css", href = "css/style.css"),
     ),
     grid(
         myGridTemplate,
-        area_styles = list(title = "margin: 20px;", info = "margin: 20px;", user = "margin: 20px;"),
+        area_styles = list(title = "margin: 20px;", 
+                           info = "margin: 20px;",
+                           map = "margin: 20px;",
+                           user = "margin: 20px;"),
         title = h1(class="ui header", icon("ship"), div (class = "content", "Shiny ship app!")),
         info = dropdown_mod_ui("dropdown1"),
-        map = card(style = "border-radius: 0; width: 100%; background: #efefef",
+        map = card(style = "border-radius: 0; width: 100%; background: #efefef; margin-top: 10px;",
                    div(class = "content",
                        tabset(list(list(menu = div("First link"), 
                                         content = div(
@@ -32,6 +36,8 @@ ui <- semanticPage(
 )
 
 server <- function(input, output, session) {
+    data <- readDataShip()
+    dropdown_mod_server("dropdown1", data$data_filter)
     plotHist_mod_server("plot1")
 }
 

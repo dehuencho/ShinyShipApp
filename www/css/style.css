@@ -14,5 +14,6 @@ body {
 }
 
 .field > label:nth-child(1) {
-    font-size: 17px !important;
+    font-size: 15px !important;
+    color: #474b52 !important;
 }
