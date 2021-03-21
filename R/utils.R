@@ -64,7 +64,7 @@ calculateDistance <- function(df_vassel){
     # df <- df %>% 
     #     select(LAT, LON, DATETIME, distance, distance2)
     # 
-    # write.table(df, "distance.csv", sep = ";", row.names = F)
+    #write.table(df, "distance.csv", sep = ";", row.names = F)
     
     return(df)
 }
