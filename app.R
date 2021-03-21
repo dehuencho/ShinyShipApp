@@ -9,13 +9,14 @@ ui <- semanticPage(
                            info = "margin: 20px;",
                            map = "margin: 20px;",
                            user = "margin: 20px;"),
-        title = h1(class="ui header", icon("ship"), div (class = "content", "Shiny ship app!")),
+        title = h1(class="ui header", icon("ship"),
+                   div (class = "content", "Shiny ship app!")),
         info = dropdown_mod_ui("dropdown1"),
         map = card(style = "border-radius: 0; width: 100%; background: #efefef; margin-top: 10px;",
                    div(class = "content",
                        tabset(list(list(menu = div("First link"), 
                                         content = div(
-                                            h3("leaflet plot")
+                                            mapLongDistance_mod_ui("map1")
                                         )), 
                                    list(menu = div("Second link"), 
                                         content = div(
@@ -37,7 +38,11 @@ ui <- semanticPage(
 
 server <- function(input, output, session) {
     data <- readDataShip()
-    dropdown_mod_server("dropdown1", data$data_filter)
+    filters <- dropdown_mod_server("dropdown1", data$data_filter)
+    mapLongDistance_mod_server("map1",
+                               data$data,
+                               filters$vassel_type,
+                               filters$vassel_name) 
     plotHist_mod_server("plot1")
 }
 

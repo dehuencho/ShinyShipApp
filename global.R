@@ -9,6 +9,7 @@ library(shinyjs)
 
 source("R/dropdown_mod.R")
 source("R/plotHist_mod.R")
+source("R/mapLongDistance_mod.R")
 source("R/utils.R")
 
 myGridTemplate <- grid_template(

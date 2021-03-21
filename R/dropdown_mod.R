@@ -53,7 +53,7 @@ dropdown_mod_server <- function(id , df_data_filter){
                     vessel_stats = card(
                         style = "border-radius: 0; width: 100%; height: 300px; background: #efefef",
                         div(class = "content",
-                            div(class = "header", style = "margin-bottom: 10px", "PM 2.5μm"),
+                            div(class = "header", style = "margin-bottom: 10px", "STATS"),
                             div(class = "description", h1("stats go here"))
                         )
                     )
@@ -71,6 +71,11 @@ dropdown_mod_server <- function(id , df_data_filter){
                 print(length(Shipnames))
                 updateSelectInput(session, "id2", choices =  Shipnames)
             })
+            
+            return(list(vassel_type = reactive({input$id1}),
+                        vassel_name = reactive({input$id2})))
+            
+            
 
         }
     )
