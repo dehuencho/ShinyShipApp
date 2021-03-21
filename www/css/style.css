@@ -1,0 +1,18 @@
+body {
+  margin: 0 !important;
+  background: #D7D7E1 !important;
+}
+
+@media screen and (min-width: 845px) {
+  #polluters_map {
+    height: 100vh !important;
+  }
+}
+
+.ui.segment[class*="bottom attached"] {
+    margin-top: 0;
+}
+
+.field > label:nth-child(1) {
+    font-size: 17px !important;
+}
