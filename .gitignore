@@ -2,7 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-initial_script.R
 data
 global.R
 rsconnect
