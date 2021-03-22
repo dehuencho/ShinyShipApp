@@ -5,3 +5,4 @@
 initial_script.R
 data
 global.R
+rsconnect
