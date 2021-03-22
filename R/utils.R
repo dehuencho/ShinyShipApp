@@ -31,40 +31,7 @@ calculateDistance <- function(df_vassel){
                distance = R*const_c) %>% 
         select(-c(R, phi1, phi2,lat_diff,lon_diff, const_a, const_c))
     
-    ## TRASPASAR A TESTING 
-    ## LAT _ LON
-    # p1 <- c(54.77127, 18.99692)
-    # p2 <- c(54.76542, 18.99361)
-    # 
-    # R = 6371E3
-    # phi1 = p1[1]*pi/180
-    # phi2 = p2[1]*pi/180
-    # delta_phi = (p2[1]-p1[1])*pi/180
-    # delta_lambda = (p2[2]-p1[2])*pi/180
-    # 
-    # a = sin(delta_phi/2) * sin(delta_phi/2) +
-    #     cos(phi1) * cos(phi2)*
-    #     sin(delta_lambda/2) * sin(delta_lambda/2)
-    # c = 2 * atan2(sqrt(a), sqrt(1-a))
-    # (d = R*c)
-    
-    ## Test distance calculation with sf package 
-    
-    # aux <- sf::st_as_sf(df %>% select(LAT, LON, DATETIME), 
-    #                 coords = c("LON", "LAT"))
-    # 
-    # st_crs(aux) = 4326
-    # 
-    # 
-    # df$distance2 <- 
-    #     c(sf::st_distance(x = aux[1:nrow(aux),], 
-    #                       y = aux[c(2:nrow(aux),nrow(aux)),], 
-    #                       by_element = TRUE))    
-    # 
-    # df <- df %>% 
-    #     select(LAT, LON, DATETIME, distance, distance2)
-    # 
-    #write.table(df, "distance.csv", sep = ";", row.names = F)
+
     
     return(df)
 }
