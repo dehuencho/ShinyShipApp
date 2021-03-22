@@ -1,6 +1,5 @@
 library(shiny)
 library(shiny.semantic)
-library(shiny.semantic)
 library(data.table)
 library(tidyverse)
 library(leaflet)

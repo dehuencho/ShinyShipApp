@@ -1,0 +1,13 @@
+name: AppApsilonShips
+title: AppApsilonShips
+username:
+account: dhm2017
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3830495
+bundleId: 4378368
+url: https://dhm2017.shinyapps.io/AppApsilonShips/
+when: 1616392660.74658
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: tests/shinytest.R|tests/testthat.R|tests/shinytest/mytest.R|tests/testthat/test-distanceCalcu.R
