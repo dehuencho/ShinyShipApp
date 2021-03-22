@@ -28,8 +28,6 @@ mapLongDistance_mod_ui <- function(id){
             area_styles = list(Distancia = "margin: 5px;", 
                                Origen = "margin: 5px;",
                                Destino = "margin: 5px;"),
-            # Distancia = h3(class = "ui header", icon("ruler") ,
-            #                textOutput(ns("distance"),inline = TRUE)),
             Distancia = uiOutput(ns("distance")),
             Origen = uiOutput(ns("fecha_o")),
             Destino = uiOutput(ns("fecha_d")),
@@ -42,28 +40,36 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
     moduleServer(
         id,
         function(input, output, session){
-            ## Loading the id of the session of this module 
+            ## Loading the id of the session for this module 
             ns <- session$ns
             
+            ## Reactive value to save de data.frame that this module return
             df_output <- reactiveVal(data.frame())
             
             output$map_bd <- renderLeaflet({
-                shiny::req(vassel_name())
                 
+                ## Only load when we have a vassel name loaded
+                shiny::req(vassel_name())
                 vassel_type <- isolate(vassel_type$val)
+                
+                ## Filter the data by name and type and then use the function
+                ## from utils.R to calculate the distances
                 df_map <-  calculateDistance(data() %>%
                                                    filter(SHIPNAME == vassel_name(),
                                                           ship_type == vassel_type))
+                
                 df_output(df_map)
+                
+                ## Extract the longest distance and the the movement associated 
+                ## with it. Create a origin, destination and others data.frames
                 max_distance <- max(df_map$distance, na.rm = T)
                 id_max_distance <- max(which(df_map$distance == max_distance))
-                
-                
+    
                 df_map_longDist_ori <- df_map[c(id_max_distance),]
                 df_map_longDist_des <- df_map[c(id_max_distance+1),]
                 df_map_others <- df_map[-c(id_max_distance,
                                            id_max_distance+1),]
-                
+                ## Update de information of the card in the top of the map 
                 output$distance <- renderUI({
                     card_for_map(
                         h3(class = "ui center aligned header", icon("ruler", style = "color: black !important;") ,
@@ -93,6 +99,8 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
  
                 })
                 
+                ## Generate some values tha help to set the view of the map
+                ## depending of the data (boundaries and centers)
                 mean_lat <- mean(c(df_map_longDist_ori$LAT,df_map_longDist_des$LAT)) 
                 mean_lon <- mean(c(df_map_longDist_ori$LON,df_map_longDist_des$LON))
                 
@@ -105,14 +113,14 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
                 delta_lat <- max_lat - min_lat
                 
                 
-                
+                ## Create de map 
                 leaflet(data = df_map_others, 
                         options = leafletOptions(zoomSnap = 0.01,
                                                  zoomControl = FALSE)) %>%
                     setView(lng = mean_lon, lat =  mean_lat, zoom = 9.5) %>%
+                    ## Set the view and zoom near the destination and origin points
                     fitBounds(lng1 = min_lon,lng2 = max_lon,
                               lat1 = min_lat-delta_lat*8,lat2 = max_lat+delta_lat*8) %>% 
-                    #setView(lng = 20.51799, lat =  57.45748, zoom = 5) %>% 
                     addProviderTiles(providers$CartoDB.Positron,
                                      options = providerTileOptions(noWrap = TRUE)) %>% 
                     addCircleMarkers(lng =~LON, lat =~LAT,

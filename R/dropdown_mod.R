@@ -12,11 +12,15 @@ dropdown_mod_server <- function(id , df_data_filter){
             ## Loading the id of the session of this module 
             ns <- session$ns
             
+            ## This reactive value save the information of the vessel type,
+            ## and help to communicate this information with other modules 
+            ## without the extra loading of sharing the input directly 
             vessel_type = reactiveValues()
             
-            ## Loading data for the first time 
+            ## Loading data for the first time, create UI after data is loaded
+            ## Create both dropdown menus for type and vessel.
             output$selectInp1 <- renderUI({
-                print("Cargamos data")
+                ## Help to create UI after data is loaded 
                 shiny::req(df_data_filter())
                 
                 grid(
@@ -47,15 +51,15 @@ dropdown_mod_server <- function(id , df_data_filter){
                 
             })
             
+            ## Each time the vessel type change, update the vessel availables.
+            ## update the select input associated and save the vessel type
             observeEvent(input$id1,{
-                print("Cambio id1")
-                
                 shiny::req(df_data_filter())
                 
+                ## Vessels availables 
                 Shipnames <- unique((as.data.frame(df_data_filter()) %>% 
                     filter(ship_type == input$id1))$SHIPNAME)
                 
-                print(length(Shipnames))
                 updateSelectInput(session, "id2", choices =  Shipnames)
                 vessel_type$val = input$id1
             })
