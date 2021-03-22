@@ -1,14 +1,7 @@
 dropdown_mod_ui <- function(id){
     ns <- NS(id)
     tagList(
-        # div(class="ui left aligned header",
-        #     style = "padding-top: 10px",
-        #     "Histogram Normal Distribution"),
         uiOutput(ns("selectInp1")),
-        # selectInput(ns("dropdown1"),label = "Label dd:",
-        #             choices = c(letters))
-        #h2("Histogram Normal Distribution"),
-        #plotOutput(ns("plot1"),width = "500px", height = "300px")
     )
 }
 dropdown_mod_server <- function(id , df_data_filter){
@@ -19,6 +12,8 @@ dropdown_mod_server <- function(id , df_data_filter){
             ## Loading the id of the session of this module 
             ns <- session$ns
             
+            vessel_type = reactiveValues()
+            
             ## Loading data for the first time 
             output$selectInp1 <- renderUI({
                 print("Cargamos data")
@@ -27,14 +22,12 @@ dropdown_mod_server <- function(id , df_data_filter){
                 grid(
                     grid_template = grid_template(default = list(
                         areas = rbind(
-                            c("vessel_filter"),
-                            c("vessel_stats")
+                            c("vessel_filter")
                         ),
                         cols_width = c("100%"),
-                        rows_height = c("300px", "300px")
+                        rows_height = c("225px")
                     )),
-                    area_styles = list(vessel_filter = "padding-top: 10px",
-                                       vessel_stats = "padding-top: 10px"),
+                    area_styles = list(vessel_filter = "padding-top: 10px"),
                     vessel_filter = card(
                         style = "border-radius: 0; width: 100%; height: 200px; background: #efefef",
                         div(class = "content",
@@ -49,15 +42,9 @@ dropdown_mod_server <- function(id , df_data_filter){
                                             label = "Name",
                                             choices = unique(df_data_filter()$SHIPNAME)))
                         )
-                    ),
-                    vessel_stats = card(
-                        style = "border-radius: 0; width: 100%; height: 300px; background: #efefef",
-                        div(class = "content",
-                            div(class = "header", style = "margin-bottom: 10px", "STATS"),
-                            div(class = "description", h1("stats go here"))
-                        )
                     )
                 )
+                
             })
             
             observeEvent(input$id1,{
@@ -70,9 +57,10 @@ dropdown_mod_server <- function(id , df_data_filter){
                 
                 print(length(Shipnames))
                 updateSelectInput(session, "id2", choices =  Shipnames)
+                vessel_type$val = input$id1
             })
             
-            return(list(vassel_type = reactive({input$id1}),
+            return(list(vassel_type = vessel_type,
                         vassel_name = reactive({input$id2})))
             
             

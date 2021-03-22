@@ -21,7 +21,7 @@ myGridTemplate <- grid_template(
             c("user", "map")
         ),
         cols_width = c("400px", "1fr"),
-        rows_height = c("50px", "auto", "150px")
+        rows_height = c("50px", "225px", "150px")
     ),
     mobile = list(
         areas = rbind(
@@ -30,7 +30,7 @@ myGridTemplate <- grid_template(
             "map",
             "user"
         ),
-        rows_height = c("50px", "100px", "auto", "200px"),
+        rows_height = c("50px", "auto", "auto", "auto"),
         cols_width = c("100%")
     )
 )

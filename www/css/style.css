@@ -17,3 +17,7 @@ body {
     font-size: 15px !important;
     color: #474b52 !important;
 }
+
+div.tab:nth-child(2) {
+  margin-bottom: 0 !important;
+}

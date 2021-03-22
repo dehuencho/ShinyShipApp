@@ -12,26 +12,21 @@ ui <- semanticPage(
         title = h1(class="ui header", icon("ship"),
                    div (class = "content", "Shiny ship app!")),
         info = dropdown_mod_ui("dropdown1"),
-        map = card(style = "border-radius: 0; width: 100%; background: #efefef; margin-top: 10px;",
+        map = card(style = "border-radius: 0; width: 100%; background: #efefef; margin-top: 10px; margin-bottom: 10px;",
                    div(class = "content",
-                       tabset(list(list(menu = div("First link"), 
+                       tabset(list(list(menu = div("Longest distance sailed"), 
                                         content = div(
                                             mapLongDistance_mod_ui("map1")
                                         )), 
-                                   list(menu = div("Second link"), 
+                                   list(menu = div("Distance by datetime"), 
                                         content = div(
                                             plotHist_mod_ui("plot1")
-                                        )),
-                                   list(menu = div("Third link"), 
-                                        content = div("Third content nose")),
-                                   list(menu = div("Second link"), 
-                                        content = div("Second content"))
-                                   
+                                        ))
                                    ))
                    )
                    ),
-        user = div(
-            h1("User grid part")
+        user = card(style = "border-radius: 0; width: 100%; background: #efefef; margin-top: 10px; margin-bottom: 10px;",
+                    stats1_mod_ui("stats1")
         )
     )
 )
@@ -44,6 +39,7 @@ server <- function(input, output, session) {
                                filters$vassel_type,
                                filters$vassel_name) 
     plotHist_mod_server("plot1")
+    stats1_mod_server("stats1")
 }
 
 shinyApp(ui = ui, server = server)
