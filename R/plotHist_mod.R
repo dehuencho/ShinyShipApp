@@ -3,20 +3,19 @@ plotHist_mod_ui <- function(id){
     tagList(
         div(class="ui left aligned header",
             style = "padding-top: 10px",
-            "Histogram Normal Distribution"),
+            "'str' function: Each row show a column, the type of variable of the column and the first elements of it."),
         #h2("Histogram Normal Distribution"),
-        plotOutput(ns("plot1"),width = "500px", height = "300px")
+        verbatimTextOutput(ns("str_data"))
     )
 }
-plotHist_mod_server <- function(id){
+plotHist_mod_server <- function(id, data){
     moduleServer(
         id,
         function(input, output, session){
-            output$plot1 <- renderPlot({
-                x = rnorm(1000)
-                ggplot2::ggplot(data.frame(x)) + 
-                    ggplot2::geom_histogram(aes(x=x), bins = 40)  
+            output$str_data <- renderPrint({
+                str(data())
             })
+
         }
     )
 }

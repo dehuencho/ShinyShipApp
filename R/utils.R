@@ -69,6 +69,14 @@ calculateDistance <- function(df_vassel){
     return(df)
 }
 
+card_for_map <- function(x){
+    return(
+        card(style = "border-radius: 1; width: 100%; background: #efefef; margin-top: 0; margin-bottom: 0;",
+             div(class = "content", style = "padding: 10px 5px 5px 5px;",
+                 x))
+    )
+}
+
 # 
 # library(plotly)
 # 

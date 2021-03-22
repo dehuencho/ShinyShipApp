@@ -12,7 +12,7 @@ mapLongDistance_mod_ui <- function(id){
                         c("mapa")
                     ),
                     cols_width = rep("auto", 3),
-                    rows_height = c("35px", "auto")
+                    rows_height = c("60px", "auto")
                 ), 
                 mobile = list(
                     areas = rbind(
@@ -22,7 +22,7 @@ mapLongDistance_mod_ui <- function(id){
                         "mapa"
                     ),
                     cols_width = c("100%"),
-                    rows_height = c("35px", "35px", "35px", "auto")
+                    rows_height = c("60px", "60px", "60px", "auto")
                 )
             ),
             area_styles = list(Distancia = "margin: 5px;", 
@@ -33,9 +33,9 @@ mapLongDistance_mod_ui <- function(id){
             Distancia = uiOutput(ns("distance")),
             Origen = uiOutput(ns("fecha_o")),
             Destino = uiOutput(ns("fecha_d")),
-            mapa = leafletOutput(ns("map_bd"), height = "530px")
+            mapa = leafletOutput(ns("map_bd"), height = "460px")
         ),
-        div(style = "padding-bottom: 5px")
+        div(style = "padding-bottom: 10px")
     )
 }
 mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
@@ -45,20 +45,16 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
             ## Loading the id of the session of this module 
             ns <- session$ns
             
-            plot_points <- reactive({
-                vassel_type <- isolate(vassel_type$val)
-                print(vassel_type)
-                df <- data() %>%
-                    filter(SHIPNAME == vassel_name(),
-                           ship_type == vassel_type)
-                return(as.data.frame(df))
-            })
+            df_output <- reactiveVal(data.frame())
             
             output$map_bd <- renderLeaflet({
                 shiny::req(vassel_name())
                 
-                df_map <- calculateDistance(plot_points())
-                
+                vassel_type <- isolate(vassel_type$val)
+                df_map <-  calculateDistance(data() %>%
+                                                   filter(SHIPNAME == vassel_name(),
+                                                          ship_type == vassel_type))
+                df_output(df_map)
                 max_distance <- max(df_map$distance, na.rm = T)
                 id_max_distance <- max(which(df_map$distance == max_distance))
                 
@@ -69,28 +65,32 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
                                            id_max_distance+1),]
                 
                 output$distance <- renderUI({
-                    h3(class = "ui header", icon("ruler") ,
-                       paste0("Distance :  ", format(round(max_distance),
-                                                    big.mark = ","),
-                              " meters"),
-                       style = "color: #9c9c9c;")
+                    card_for_map(
+                        h3(class = "ui center aligned header", icon("ruler", style = "color: black !important;") ,
+                           paste0("Distance :  ", format(round(max_distance),
+                                                         big.mark = ","),
+                                  " meters"),
+                           style = "color: #9c9c9c;")  
+                    )
                 })
                 output$fecha_o <- renderUI({
-                    
-                    #print(df_map_longDist_ori$DATETIME)
-                    h3(class = "ui header", icon("circle",
-                                                 style = "color: #00a30b;") ,
-                       paste0("Origin :  ", format(df_map_longDist_ori$DATETIME,
-                                                   "%Y-%m-%d %H:%M")),
-                       style = "color: #9c9c9c;")
+                    card_for_map(
+                        h3(class = "ui center aligned header", icon("circle",
+                                                     style = "color: #00a30b;") ,
+                           paste0("Origin :  ", format(df_map_longDist_ori$DATETIME,
+                                                       "%Y-%m-%d %H:%M")),
+                           style = "color: #9c9c9c;")
+                    )
                 })
                 output$fecha_d <- renderUI({
-                    #print(df_map_longDist_des$DATETIME)
-                    h3(class = "ui header", icon("circle",
-                                                 style = "color: #a30000;") ,
-                       paste0("Destination :  ",format(df_map_longDist_des$DATETIME,
-                                                       "%Y-%m-%d %H:%M")),
-                       style = "color: #9c9c9c;")
+                    card_for_map(
+                        h3(class = "ui center aligned header", icon("circle",
+                                                     style = "color: #a30000;") ,
+                           paste0("Destination :  ",format(df_map_longDist_des$DATETIME,
+                                                           "%Y-%m-%d %H:%M")),
+                           style = "color: #9c9c9c;")
+                    )
+ 
                 })
                 
                 mean_lat <- mean(c(df_map_longDist_ori$LAT,df_map_longDist_des$LAT)) 
@@ -102,12 +102,16 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
                 min_lat <- min(c(df_map_longDist_ori$LAT,df_map_longDist_des$LAT)) 
                 min_lon <- min(c(df_map_longDist_ori$LON,df_map_longDist_des$LON)) 
                 
+                delta_lat <- max_lat - min_lat
+                
+                
+                
                 leaflet(data = df_map_others, 
                         options = leafletOptions(zoomSnap = 0.01,
                                                  zoomControl = FALSE)) %>%
                     setView(lng = mean_lon, lat =  mean_lat, zoom = 9.5) %>%
                     fitBounds(lng1 = min_lon,lng2 = max_lon,
-                              lat1 = min_lat-0.3,lat2 = max_lat+0.3) %>% 
+                              lat1 = min_lat-delta_lat*8,lat2 = max_lat+delta_lat*8) %>% 
                     #setView(lng = 20.51799, lat =  57.45748, zoom = 5) %>% 
                     addProviderTiles(providers$CartoDB.Positron,
                                      options = providerTileOptions(noWrap = TRUE)) %>% 
@@ -124,5 +128,5 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
                                      color = "#a30000",
                                      opacity = 1, fillOpacity = 1)
             })
-            
+            return(list(df_map = df_output))
         })}
