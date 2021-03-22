@@ -1,16 +1,20 @@
 library(shiny)
 library(shiny.semantic)
 library(data.table)
-library(tidyverse)
+#library(tidyverse)
+library(dplyr)
+library(tidyr)
 library(leaflet)
 library(lubridate)
 library(shinyjs)
 library(sf)
 library(bslib)
 library(plotly)
+library(DT)
 
 source("R/dropdown_mod.R")
 source("R/description_mod.R")
+source("R/stats1_mod.R")
 source("R/mapLongDistance_mod.R")
 source("R/utils.R")
 
@@ -89,11 +93,17 @@ ui <- semanticPage(
         auth = div(class = "content",
                    style = "margin-left: 20px; margin-top:10px;font-size: 20px;",
                    tags$a("Daniel Huencho", href = "https://www.danielhuencho.com"),
-                   tags$a(icon("github"), href = "https://www.danielhuencho.com"))
+                   tags$a(icon("github"), href = "https://github.com/dehuencho/ShinyShipApp"))
     )
 )
 
 server <- function(input, output, session) {
+    source("R/dropdown_mod.R")
+    source("R/description_mod.R")
+    source("R/stats1_mod.R")
+    source("R/mapLongDistance_mod.R")
+    source("R/utils.R")
+    
     ## Read the data with data.table
     data <- readDataShip()
     ## Manage the drop down information
@@ -105,7 +115,7 @@ server <- function(input, output, session) {
                                filters$vassel_type,
                                filters$vassel_name)
     ## Show a descriptive summary of the dataset with str function
-    description_mod_server("plot1", data$data)
+    description_mod_server("plot1", data$description)
     ## Generate statistic and plot for the distance through time. 
     stats1_mod_server("stats1", df_distance$df_map)
 }

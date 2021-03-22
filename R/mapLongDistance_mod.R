@@ -52,6 +52,7 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
                 shiny::req(vassel_name())
                 vassel_type <- isolate(vassel_type$val)
                 
+                plot_map <- TRUE 
                 ## Filter the data by name and type and then use the function
                 ## from utils.R to calculate the distances
                 df_map <-  calculateDistance(data() %>%
@@ -62,13 +63,31 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
                 
                 ## Extract the longest distance and the the movement associated 
                 ## with it. Create a origin, destination and others data.frames
-                max_distance <- max(df_map$distance, na.rm = T)
-                id_max_distance <- max(which(df_map$distance == max_distance))
-    
-                df_map_longDist_ori <- df_map[c(id_max_distance),]
-                df_map_longDist_des <- df_map[c(id_max_distance+1),]
-                df_map_others <- df_map[-c(id_max_distance,
-                                           id_max_distance+1),]
+                ## Chec if the vessel have good data else dont plot.
+                dist_aux <- df_map$distance[!is.na(df_map$distance) & df_map$distance != 0]
+                if(length(dist_aux)>2){
+                    max_distance <- max(df_map$distance, na.rm = T)
+                    id_max_distance <- max(which(df_map$distance == max_distance))
+                    
+                    df_map_longDist_ori <- df_map[c(id_max_distance),]
+                    df_map_longDist_des <- df_map[c(id_max_distance+1),]
+                    
+                    df_map_others <- df_map[-c(id_max_distance,
+                                               id_max_distance+1),]
+                    
+                } else {
+
+                    plot_map <- FALSE
+                    max_distance <- 0 
+                    id_max_distance <- nrow(df_map)-1
+                    df_map_longDist_ori <- df_map[c(id_max_distance),]
+                    df_map_longDist_des <- df_map[c(id_max_distance+1),]
+                    df_map_others <- df_map[c(id_max_distance-1),]
+                }
+                
+                print(df_map_longDist_ori)
+                print(df_map_longDist_des)
+
                 ## Update de information of the card in the top of the map 
                 output$distance <- renderUI({
                     card_for_map(
@@ -111,8 +130,12 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
                 min_lon <- min(c(df_map_longDist_ori$LON,df_map_longDist_des$LON)) 
                 
                 delta_lat <- max_lat - min_lat
+                delta_lon <- max_lon - min_lon
+                max_delta <- max(delta_lat, delta_lon)
                 
+
                 
+                if(!plot_map){return()}
                 ## Create de map 
                 leaflet(data = df_map_others, 
                         options = leafletOptions(zoomSnap = 0.01,
@@ -120,7 +143,7 @@ mapLongDistance_mod_server <- function(id, data, vassel_type, vassel_name){
                     setView(lng = mean_lon, lat =  mean_lat, zoom = 9.5) %>%
                     ## Set the view and zoom near the destination and origin points
                     fitBounds(lng1 = min_lon,lng2 = max_lon,
-                              lat1 = min_lat-delta_lat*8,lat2 = max_lat+delta_lat*8) %>% 
+                              lat1 = min_lat-max_delta*6,lat2 = max_lat+max_delta*6) %>% 
                     addProviderTiles(providers$CartoDB.Positron,
                                      options = providerTileOptions(noWrap = TRUE)) %>% 
                     addCircleMarkers(lng =~LON, lat =~LAT,

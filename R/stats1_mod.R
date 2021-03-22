@@ -10,20 +10,39 @@ stats1_mod_server <- function(id, df_distance){
         function(input, output, session){
             
             ns <- session$ns
+            
+            ## Check if the vessel have good information else return zeros and
+            ## dont plot
+            dist <- reactive({
+
+                dist <- df_distance()$distance 
+
+                dist <- dist[!is.na(dist)]
+
+                if (length(dist)<2) { dist <- c(0,0)}
+                
+                return(dist)
+                })
+            
+            
             ## Generate the information about the number of rows and the number of 
             ## samples that have a distance equal to zero, for a particual vessel.  
             numb1 <- renderUI({
-                h3(class = "ui center aligned header", icon("list"),
+
+                return(h3(class = "ui center aligned header", icon("list"),
                    paste0(nrow(df_distance()), " rows  -  ",
-                          sum(df_distance()$distance==0,
-                              na.rm = T), " zero distance"))
+                          sum(dist()==0,
+                              na.rm = T), " zero distance")))
+                
             })
             ## Generate information of the average distance for all the samples for
             ## a particular vessel 
             numb3 <- renderUI({
-                h2(class = "ui center aligned header",
-                   "Avg. distance ", round(mean(df_distance()$distance,
-                                            na.rm = T),1), " m")
+
+                return(h2(class = "ui center aligned header",
+                   "Avg. distance ", round(mean(dist(),
+                                            na.rm = T),1), " m"))
+                
             })
             ## Histogram rendering 
             plotHist <- renderUI({
@@ -56,22 +75,31 @@ stats1_mod_server <- function(id, df_distance){
             })
             
             ## Create de histogram with plotly for the distances of a particular vessel that 
-            ## are different of zero. 
+            ## are different of zero 
             output$plotly_histogram <- renderPlotly({
                 
-                dist <- df_distance()$distance 
+                dist_local <- dist()
+                dist_local <-dist_local[!is.na(dist_local)]  
+                
+                
+                if (all(dist()==0)) {
+                    return()
+                }
+                
+                
                 axis_y <- list(showticklabels = FALSE,
                                ticks = "",
                                title = "")
                 axis_x <- list(title = "Meters")
-
+                
                 plot_ly(alpha = 0.6) %>% 
-                    add_histogram(x = dist[dist != 0])%>% 
+                    add_histogram(x = dist_local)%>% 
                     layout(xaxis = axis_x, yaxis = axis_y) %>% 
                     layout(plot_bgcolor='transparent') %>% 
                     layout(paper_bgcolor='transparent',
                            margin = list(l = 10),
                            title = list(text = "Histogram: Distances without zeros"))
+                
             })
         }
     )

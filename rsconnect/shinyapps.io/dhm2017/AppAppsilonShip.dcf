@@ -5,9 +5,9 @@ account: dhm2017
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3830505
-bundleId: 4378425
+bundleId: 4380444
 url: https://dhm2017.shinyapps.io/AppAppsilonShip/
-when: 1616394248.43138
+when: 1616425930.18915
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .Rprofile|tests/shinytest.R|tests/testthat.R|tests/shinytest/mytest.R|tests/testthat/test-distanceCalcu.R
+ignoredFiles: .RData|.Rprofile|tests/shinytest.R|tests/testthat.R|tests/shinytest/mytest.R|tests/testthat/test-distanceCalcu.R

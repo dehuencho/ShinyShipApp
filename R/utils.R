@@ -4,8 +4,11 @@ readDataShip <- function(){
     ## Unique values for the dropdown menu
     df_unique <- unique(df[,c("SHIPNAME", "ship_type")])
     
+    description <- read.table("data/description.csv", sep = ";",
+                              header = T)
     return(list(data = shiny::reactive({df}),
-                data_filter = shiny::reactive({df_unique}) ))
+                data_filter = shiny::reactive({df_unique}),
+                description = shiny::reactive({description})))
 }
 
 calculateDistance <- function(df_vassel){
